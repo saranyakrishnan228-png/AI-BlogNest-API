@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI BlogNest</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header>
+    <div class="logo">📝 AI BlogNest</div>
+    <nav>
+        <a href="/">Home</a>
+        <a href="#generate">Generate</a>
+        <a href="#about">About</a>
+    </nav>
+</header>
+
+<section class="hero">
+    <h1>Create Amazing Blogs with <span>AI</span></h1>
+    <p>Enter a topic and let AI create an informative blog for you.</p>
+
+    <div class="generator" id="generate">
+        <input type="text" id="topic" placeholder="Enter your blog topic...">
+        <button onclick="generateBlog()">Generate Blog</button>
+    </div>
+
+    <p id="loading"></p>
+</section>
+
+<section class="result-section">
+    <h2>Generated Blog</h2>
+    <div id="result">Your generated blog will appear here.</div>
+</section>
+
+<section class="features">
+    <div class="card">
+        <h3>🤖 AI Powered</h3>
+        <p>Generate blogs automatically using Artificial Intelligence.</p>
+    </div>
+    <div class="card">
+        <h3>⚡ Fast</h3>
+        <p>Create blog content quickly by entering a simple topic.</p>
+    </div>
+    <div class="card">
+        <h3>✍️ Easy</h3>
+        <p>Simple interface that anyone can use.</p>
+    </div>
+</section>
+
+<section id="about" class="about">
+    <h2>About AI BlogNest</h2>
+    <p>
+        AI BlogNest is a simple AI-powered blog generation website.
+        Users can enter a topic and generate blog content automatically.
+    </p>
+</section>
+
+<footer>
+    <p>© 2026 AI BlogNest | Created using Python Flask</p>
+</footer>
+
+<script>
+async function generateBlog() {
+    const topic = document.getElementById("topic").value;
+    const result = document.getElementById("result");
+    const loading = document.getElementById("loading");
+
+    if (topic.trim() === "") {
+        result.innerHTML = "<p>Please enter a topic.</p>";
+        return;
+    }
+
+    loading.innerText = "Generating your blog...";
+    result.innerHTML = "";
+
+    try {
+        const response = await fetch("/generate", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({topic: topic})
+        });
+
+        const data = await response.json();
+        loading.innerText = "";
+
+        if (data.error) {
+            result.innerHTML =
+                "<p class='error'>" + data.error + "</p>";
+            return;
+        }
+
+        result.innerText = data.blog;
+
+    } catch (error) {
+        loading.innerText = "";
+        result.innerHTML =
+            "<p class='error'>Something went wrong.</p>";
+    }
+}
+</script>
+
+</body>
+</html>
